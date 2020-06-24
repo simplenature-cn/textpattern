@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nas-txp-hellolinux-plugins
+spec:
+  capacity:
+    storage: 1Gi
+  storageClassName: nas
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  flexVolume:
+    driver: "alicloud/nas"
+    options:
+      mode: '777'
+      modeType: recursive
+      server: "1c16a4bb1d-hat25.cn-beijing.nas.aliyuncs.com"
+      path: "/txp/hellolinux/plugins"
+      vers: "3"
+      options: "nolock,tcp,noresvport"
+  volumeMode: Filesystem
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-txp-hellolinux-plugins
+spec:
+  storageClassName: nas
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

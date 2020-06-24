@@ -1,0 +1,94 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sn-txp-hellolinux
+  labels:
+    app: sn-txp-hellolinux
+    env: dev
+    stage: stage
+spec:
+  type: NodePort
+  selector:
+    app: sn-txp-hellolinux
+  ports:
+    - protocol: TCP
+      port: 80
+      name: http
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sn-txp-hellolinux
+  labels:
+    app: sn-txp-hellolinux
+    env: dev
+    stage: stage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sn-txp-hellolinux
+  template:
+    metadata:
+      labels:
+        app: sn-txp-hellolinux
+      annotations:
+        "k8s.aliyun.com/eci-use-specs": "0.25-0.5Gi"
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: sn-txp-hellolinux
+          image: registry.cn-beijing.aliyuncs.com/xpatglodon/sn-txp-hellolinux:20200623-180847
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: txp-hellolinux-images
+              mountPath: /var/www/html/images
+            - name: txp-hellolinux-files
+              mountPath: /var/www/html/files
+            - name: txp-hellolinux-themes
+              mountPath: /var/www/html/themes
+            - name: txp-hellolinux-plugins
+              mountPath: /var/www/html/textpattern/plugins
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 1
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            periodSeconds: 5
+      volumes:
+        - name: txp-hellolinux-images
+          persistentVolumeClaim:
+            claimName: pvc-txp-hellolinux-images
+        - name: txp-hellolinux-files
+          persistentVolumeClaim:
+            claimName: pvc-txp-hellolinux-files
+        - name: txp-hellolinux-themes
+          persistentVolumeClaim:
+            claimName: pvc-txp-hellolinux-themes
+        - name: txp-hellolinux-plugins
+          persistentVolumeClaim:
+            claimName: pvc-txp-hellolinux-plugins
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - sn-txp-hellolinux
+              topologyKey: "kubernetes.io/hostname"

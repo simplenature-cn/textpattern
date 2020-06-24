@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  finalizers:
+    - kubernetes.io/pv-protection
+  labels:
+    alicloud-pvname: sn-txp-hellolinux-images
+  name: sn-txp-hellolinux-images
+  selfLink: /api/v1/persistentvolumes/sn-txp-hellolinux-images
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  csi:
+    driver: ossplugin.csi.alibabacloud.com
+    volumeAttributes:
+      akId: LTAI4G9FD7K2V9ZGT3tUBTAS
+      akSecret: dxmPgz64UfE8m1pbV3jzP8m94tS5V5
+      bucket: txp-test
+      otherOpts: ''
+      url: vpc100-oss-cn-beijing.aliyuncs.com
+    volumeHandle: sn-txp-hellolinux-images
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: oss
+  volumeMode: Filesystem
+status:
+  phase: Available
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sn-txp-hellolinux-images-claim
+spec:
+  storageClassName: oss
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
