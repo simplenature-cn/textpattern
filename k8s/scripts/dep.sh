@@ -10,23 +10,11 @@ NAMESPACE=""
 KUBECONTEXT=""
 echo "$1"
 if [ "$1" = "Prod" ]; then
-  DOCKER_USERNAME="glodon_ydsjpt"
-  DOCKER_PWD="1qaz@WSX"
-  NAMESPACE="ydsjprod"
-  IMAGENAME="ydsjusermanager-prodqa"
+  DOCKER_USERNAME=""
+  DOCKER_PWD=""
+  NAMESPACE=""
+  IMAGENAME=""
   KUBECONTEXT=$PROD_KUBE_CONTEXT
-elif [ "$1" = "ProdStg" ]; then
-  DOCKER_USERNAME="glodon_ydsjpt"
-  DOCKER_PWD="1qaz@WSX"
-  NAMESPACE="ydsjprod"
-  IMAGENAME="ydsjusermanager-prodstg"
-  KUBECONTEXT=$PROD_KUBE_CONTEXT
-elif [ "$1" = "QA" ]; then
-  DOCKER_USERNAME="glodon_ydsjp_test"
-  DOCKER_PWD="~Password01!"
-  NAMESPACE="ydsjtest"
-  IMAGENAME="ydsjusermanager-devqa"
-  KUBECONTEXT=$DEV_KUBE_CONTEXT
 else
   DOCKER_USERNAME="simplenature"
   DOCKER_PWD="~liyan850723"
